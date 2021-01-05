@@ -1200,16 +1200,19 @@ and m_arguments_concat a b =
 
   (* specific case: f"...{$X}..." will properly extract $X from f"foo {bar} baz" *)
   | A.Arg (A.L (A.String("...", a)))::xsa, B.Arg(bexpr)::xsb ->
-      (match Normalize_generic.constant_propagation_and_evaluate_literal bexpr
+      (* (match Normalize_generic.constant_propagation_and_evaluate_literal bexpr
        with
-       | Some _ ->
+       | Some _b -> *)
+           (* pr2 ("arg_concat: Evaluated " ^ (B.show_any (B.E bexpr)) ^ " to " ^ (B.show_any (B.E (B.L _b)))); *)
            (* can match nothing *)
-           (m_arguments_concat xsa xsb) >||>
+           (m_arguments_concat xsa (B.Arg(bexpr)::xsb)) >||>
            (* can match more *)
            (m_arguments_concat ((A.Arg (A.L (A.String("...", a))))::xsa) xsb)
-       | None ->
-           (m_arguments_concat xsa (B.Arg(bexpr)::xsb))
-      )
+       (* | None ->
+       (* what about matching f"...{$X}..." against f"{$A} {$B} where $X:=$B ? " *)
+       pr2 ("arg_concat: Evaluated " ^ (B.show_any (B.E bexpr)) ^ " to None");
+           (m_arguments_concat xsa (B.Arg(bexpr)::xsb)) *)
+      (* ) *)
 
   (*e: [[Generic_vs_generic.m_arguments_concat()]] ellipsis cases *)
   (* the general case *)
